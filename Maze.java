@@ -2,38 +2,30 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 public class Maze{
-  public static void main(String args[]){
-    System.out.println(returnString(1));
-  }
-  public static String returnString(int n){
-    String newstr = "";
-    try{
-      File text = new File("Maze1.txt");
-      Scanner scanText = new Scanner(text);
-      while (scanText.hasNextLine()){
-        newstr += scanText.nextLine() + "\n";
+  public static void main(String args[])throws FileNotFoundException{
+    File text = new File("Maze1.txt");
+    Scanner in = new Scanner(text);
+    int row = 0;
+    int col = 0;
+    while(in.hasNextLine()){
+      String newstr = in.nextLine();
+      col = newstr.length();
+      row ++;
+    }
+    in = new Scanner(text);
+    char[][] maze = new char[row][col];
+    int countr = 0;
+    while(in.hasNextLine()){
+      String line = in.nextLine();
+      for(int i = 0; i < line.length(); i++){
+        maze[countr][i] = line.charAt(i);
       }
+      countr ++;
     }
-    catch(Exception e){
-      newstr += "FileNotFoundException";
+    for (int i = 0; i < maze.length; i++) {
+      System.out.println(maze[i]);
     }
-    return newstr;
-  }
 
-  public static String arrayChar(String someStr){
-    String newstr = "";
-    int [][] newArr = new int[10][10];
-    try{
-      File text = new File("Maze1.txt");
-      Scanner scanText = new Scanner(text);
-      while (scanText.hasNextLine()){
-        newstr += scanText.nextLine() + "\n";
-      }
-    }
-    catch(Exception e){
-      newstr += "FileNotFoundException";
-    }
-    return newstr;
   }
 
 }
