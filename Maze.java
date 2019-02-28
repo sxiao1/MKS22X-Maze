@@ -40,23 +40,40 @@ public class Maze{
     }
   }
 
+  public boolean check(int row, int col){
+    if(maze[row][col] != ' ' || maze[row][col] != 'E'){
+      return false;
+    }
+    return true;
+  }
+
   public int solve(){
     maze[xpos][ypos] = '@';
-    if(xpos + xmoves[0] < row && maze[xpos + xmoves[0]][ypos] != '@'){
-      maze[xpos + xmoves[0]][ypos] = '@';
+    return -1;
+  }
+
+  public int solveH(int row, int col){
+    if(maze[row][col] == 'E'){
+      return -1;
     }
-    else if(xpos + xmoves[1] < row && maze[xpos + xmoves[0]][ypos] != '@'){
-      maze[xpos + xmoves[1]][ypos] = '@';
-    }
-    else if(ypos + ymoves[0] < col && maze[xpos][ypos + ymoves[0]] != '@'){
-      maze[xpos][ypos + ymoves[0]]= '@';
-    }
-    else if(ypos + ymoves[1] < col && maze[xpos][ypos + ymoves[1]] != '@'){
-      maze[xpos][ypos + ymoves[1]] = '@';
+    if(check(row, col)){
+      maze[row][col] = '@';
+      if(row + xmoves[0] < maze.length && row + xmoves[0] >= 0){
+        return solveH(row + xmoves[0], col);
+      }
+      if(row + xmoves[1] < maze.length && row + xmoves[1] >= 0){
+        return solveH(row + xmoves[1], col);
+      }
+      if(col + ymoves[0] < maze[0].length && col + ymoves[0] >= 0){
+        return solveH(row,col + ymoves[0]);
+      }
+      if(col + ymoves[1] < maze[0].length && col + ymoves[1] >=0){
+        return solveH(row, col + ymoves[1]);
+      }
     }
     return 1;
   }
 
-
-
+  public void retrack(int row, int col){
+  }
 }
