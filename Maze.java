@@ -3,16 +3,16 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 public class Maze{
   private boolean animate;
-  int xpos = 0;
-  int ypos = 0;
-  int[][] moves = {{1,0}, {-1,0}, {0,1} , {0,-1}};
+  int xpos = -1;
+  int ypos = -1;
+  int[][] moves = {{1,0}, {-1,0}, {0,1} , {0,-1}}; //up down left right moves
   int row = 0;
   int col = 0;
   char[][] maze;
   public Maze(String filename)throws FileNotFoundException{
     animate = false;
     try{
-      File text = new File("data1.dat");
+      File text = new File("data3.dat");
       Scanner in = new Scanner(text);
       while(in.hasNextLine()){
         String newstr = in.nextLine();
@@ -27,8 +27,11 @@ public class Maze{
         for(int i = 0; i < line.length(); i++){
           maze[countr][i] = line.charAt(i);
           if(maze[countr][i] =='S'){
-            xpos = countr;
+            xpos = countr; //keeping track of where the Start coordinate is
             ypos = i;
+            if(xpos == -1 || ypos == -1){
+              throw new IllegalStateException();
+            }
           }
         }
         countr ++;
@@ -92,31 +95,34 @@ public class Maze{
   }
 
   public int solve(){
-    return (solveH(xpos, ypos, 0));
+    return solveH(xpos, ypos, 0);
   }
 
   public int solveH(int row, int col, int steps){
-    if(maze[row][col] == 'E'){
+    if(maze[row][col] == 'E'){ //base case or when the recursion stops
       return steps;
     }
-    for(int i = 0; i < moves.length; i++){
-      int rowCheck = row + moves[i][0];
-      int colCheck = col + moves[i][0];
-      if(maze[rowCheck][colCheck] == ' ' || maze[rowCheck][colCheck] == 'E'){
-        maze[row][col] = '@';
-        int result = solveH(rowCheck, colCheck, steps + 1);
-        if(result != -1){
-          return result;
-        }
-        //maze[row][col] = '.';
+    if(maze[row][col] != '#' && maze[row][col] != '.' && maze[row][col] != '@'){ //cannot go to a spot with non white spaces
+      maze[row][col] = '@';
+      for(int i = 0; i < moves.length; i++){
+        int num = solveH(row + moves[i][0], col + moves[i][1], steps + 1);
+          if(num != -1){
+            return num; //if the code isn't false return the num
+          }
       }
+      maze[row][col] = '.'; //if there are no possible moves with the array of moves then it marks it with a .
     }
-    return -1;
+    if(animate){
+          clearTerminal();
+          System.out.println(this);
+          wait(90); //slow enought to see the path of the code
+      }
+    return -1; //when the code is false
   }
 
   public static void main(String[] args){
     try{
-      Maze test = new Maze("data1.dat");
+      Maze test = new Maze("data3.dat");
       test.setAnimate(true);
       System.out.println(test.solve());
       System.out.println(test);
