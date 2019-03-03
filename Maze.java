@@ -2,22 +2,66 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 public class Maze{
+  private boolean animate;
   int xpos = 0;
   int ypos = 0;
-  int[] xmoves = {1,-1};
-  int[] ymoves = {1, -1};
+  int[][] moves = {{1,0}, {-1,0}, {0,1} , {0,-1}};
   int row = 0;
   int col = 0;
-  char[][] maze = new char[row][col];
+  char[][] maze;
+  public Maze(String filename)throws FileNotFoundException{
+    animate = false;
+    try{
+      File text = new File("data1.dat");
+      Scanner in = new Scanner(text);
+      while(in.hasNextLine()){
+        String newstr = in.nextLine();
+        col = newstr.length();
+        row ++;
+      }
+      maze = new char[row][col];
+      in = new Scanner(text);
+      int countr = 0;
+      while(in.hasNextLine()){
+        String line = in.nextLine();
+        for(int i = 0; i < line.length(); i++){
+          maze[countr][i] = line.charAt(i);
+          if(maze[countr][i] =='S'){
+            xpos = countr;
+            ypos = i;
+          }
+        }
+        countr ++;
+      }
+    }
+    catch(FileNotFoundException e){}
+  }
+  public void setAnimate(boolean b){
+    animate = b;
+  }
+  public void wait(int millis){
+    try {
+     Thread.sleep(millis);
+    }
+    catch (InterruptedException e) {
+    }
+  }
+
+   public void clearTerminal(){
+       System.out.println("\033[2J\033[1;1H");
+   }
   public String toString(){
     String newstr= "";
     for (int i = 0; i < maze.length; i++) {
-      newstr+=maze[i];
+      for(int x = 0; x < maze[0].length; x++){
+        newstr+=maze[i][x];
+      }
+      newstr += "\n";
     }
     return newstr;
   }
 
-  public void readFile() throws FileNotFoundException{
+  /*public void readFile() throws FileNotFoundException{
     File text = new File("Maze1.txt");
     Scanner in = new Scanner(text);
     while(in.hasNextLine()){
@@ -38,7 +82,7 @@ public class Maze{
       }
       countr ++;
     }
-  }
+  }*/
 
   public boolean check(int row, int col){
     if(maze[row][col] != ' ' || maze[row][col] != 'E'){
@@ -48,32 +92,37 @@ public class Maze{
   }
 
   public int solve(){
-    maze[xpos][ypos] = '@';
+    return (solveH(xpos, ypos, 0));
+  }
+
+  public int solveH(int row, int col, int steps){
+    if(maze[row][col] == 'E'){
+      return steps;
+    }
+    for(int i = 0; i < moves.length; i++){
+      int rowCheck = row + moves[i][0];
+      int colCheck = col + moves[i][0];
+      if(maze[rowCheck][colCheck] == ' ' || maze[rowCheck][colCheck] == 'E'){
+        maze[row][col] = '@';
+        int result = solveH(rowCheck, colCheck, steps + 1);
+        if(result != -1){
+          return result;
+        }
+        //maze[row][col] = '.';
+      }
+    }
     return -1;
   }
 
-  public int solveH(int row, int col){
-    if(maze[row][col] == 'E'){
-      return -1;
+  public static void main(String[] args){
+    try{
+      Maze test = new Maze("data1.dat");
+      test.setAnimate(true);
+      System.out.println(test.solve());
+      System.out.println(test);
     }
-    if(check(row, col)){
-      maze[row][col] = '@';
-      if(row + xmoves[0] < maze.length && row + xmoves[0] >= 0){
-        return solveH(row + xmoves[0], col);
-      }
-      if(row + xmoves[1] < maze.length && row + xmoves[1] >= 0){
-        return solveH(row + xmoves[1], col);
-      }
-      if(col + ymoves[0] < maze[0].length && col + ymoves[0] >= 0){
-        return solveH(row,col + ymoves[0]);
-      }
-      if(col + ymoves[1] < maze[0].length && col + ymoves[1] >=0){
-        return solveH(row, col + ymoves[1]);
-      }
+    catch(Exception e){
+      System.out.println(e);
     }
-    return 1;
-  }
-
-  public void retrack(int row, int col){
-  }
+    }
 }
