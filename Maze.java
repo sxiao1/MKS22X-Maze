@@ -120,7 +120,7 @@ public class Maze{
     return -1; //when the code is false
   }
 
-  public static void main(String[] args){
+  /*public static void main(String[] args){
     try{
       Maze test = new Maze("data3.dat");
       test.setAnimate(true);
@@ -130,5 +130,5 @@ public class Maze{
     catch(Exception e){
       System.out.println(e);
     }
-    }
+  }*/
 }
