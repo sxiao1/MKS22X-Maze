@@ -12,7 +12,7 @@ public class Maze{
   public Maze(String filename)throws FileNotFoundException{
     animate = false;
     try{
-      File text = new File("data3.dat");
+      File text = new File(filename);
       Scanner in = new Scanner(text);
       while(in.hasNextLine()){
         String newstr = in.nextLine();
